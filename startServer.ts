@@ -39,7 +39,7 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  server.express.use(cors());
+  server.express.use(cors({ credentials: true, origin: true }));
   server.express.use(
     session({
       secret: "karnivool125",
