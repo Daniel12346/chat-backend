@@ -1,4 +1,5 @@
 import "reflect-metadata";
+
 import { GraphQLServer } from "graphql-yoga";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
@@ -9,8 +10,7 @@ import mutationResolvers from "./src/resolvers/mutations";
 import queryResolvers from "./src/resolvers/query";
 import isAuth from "./src/middleware/auth";
 import { Request } from "express";
-
-import * as fs from "fs";
+import * as cors from "cors";
 
 const allResolvers = {
   ...mutationResolvers,
@@ -39,6 +39,7 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
+  server.express.use(cors());
   server.express.use(
     session({
       secret: "karnivool125",
