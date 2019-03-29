@@ -39,7 +39,7 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  server.express.use(cors({ credentials: true }));
+  server.express.use(cors({ credentials: true, origin: true }));
   server.express.use(
     session({
       secret: "karnivool125",
@@ -49,7 +49,13 @@ const startServer = async () => {
     })
   );
   server.express.use(isAuth);
-  await server.start();
+  await server.start({
+    cors: {
+      credentials: true,
+      //TODO: set origin to frontend url
+      origin: "*"
+    }
+  });
 };
 
 export default startServer;
