@@ -49,11 +49,12 @@ const startServer = async () => {
     })
   );
   server.express.use(isAuth);
-  await server.start({
+  server.express.use(cors());
+  server.start({
     cors: {
       credentials: true,
       //TODO: set origin to frontend url
-      origin: "*"
+      origin: ["*"]
     }
   });
 };
