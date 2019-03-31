@@ -1,5 +1,4 @@
 import "reflect-metadata";
-
 import { GraphQLServer } from "graphql-yoga";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
@@ -10,7 +9,7 @@ import mutationResolvers from "./src/resolvers/mutations";
 import queryResolvers from "./src/resolvers/query";
 import isAuth from "./src/middleware/auth";
 import { Request } from "express";
-import * as cors from "cors";
+//import * as cors from "cors";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -77,9 +76,9 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  server.express.use(
+  /* server.express.use(
     cors({ credentials: true, origin: true, methods: ["POST", "OPTIONS"] })
-  );
+  );*/
   server.express.use(
     session({
       secret: "karnivool125",
@@ -92,7 +91,7 @@ const startServer = async () => {
   server.start({
     port: process.env.PORT || 4000,
     cors: {
-      methods: ["POST", "OPTIONS"],
+      methods: ["POST", "GET"],
       credentials: true,
       //TODO: set origin to frontend url
       origin: ["*"]
