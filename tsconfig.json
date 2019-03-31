@@ -15,5 +15,11 @@
     "experimentalDecorators": true
   },
   "exclude": ["node_modules"],
-  "include": ["./*.ts", "./src/schemas", "./src/**/*.ts", "index.ts"]
+  "include": [
+    "./*.ts",
+    "./src/schemas",
+    "./src/**/*.ts",
+    "index.ts",
+    "ormconfig.js"
+  ]
 }

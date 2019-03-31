@@ -11,6 +11,9 @@ import queryResolvers from "./src/resolvers/query";
 import isAuth from "./src/middleware/auth";
 import { Request } from "express";
 import * as cors from "cors";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const allResolvers = {
   ...mutationResolvers,
@@ -34,8 +37,43 @@ const createServer = () => {
 
 const startServer = async () => {
   const server = createServer();
-  //all the connection settings are in ormconfig.json
-  const connection = await createConnection();
+  //the settings are here because typeorm could not read the databases' names from the ormconfig
+  const connection = await createConnection(
+    process.env.NODE_ENV === "development"
+      ? {
+          name: "local",
+          host: "localhost",
+          type: "postgres",
+          port: 5432,
+          username: "test",
+          password: "test",
+          database: "test",
+          logging: false,
+          entities: ["src/entity/**/*.ts"],
+          migrations: ["src/migration/**/*.ts"],
+          subscribers: ["src/subscriber/**/*.ts"],
+          cli: {
+            entitiesDir: "src/entity",
+            migrationsDir: "src/migration",
+            subscribersDir: "src/subscriber"
+          }
+        }
+      : {
+          name: "heroku",
+          url: process.env.DATABASE_URL,
+          type: "postgres",
+
+          logging: false,
+          entities: ["src/entity/**/*.ts"],
+          migrations: ["src/migration/**/*.ts"],
+          subscribers: ["src/subscriber/**/*.ts"],
+          cli: {
+            entitiesDir: "src/entity",
+            migrationsDir: "src/migration",
+            subscribersDir: "src/subscriber"
+          }
+        }
+  );
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
