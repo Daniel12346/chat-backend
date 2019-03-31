@@ -39,7 +39,9 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  server.express.use(cors({ credentials: true, origin: true }));
+  server.express.use(
+    cors({ credentials: true, origin: true, methods: ["POST", "OPTIONS"] })
+  );
   server.express.use(
     session({
       secret: "karnivool125",
@@ -49,9 +51,10 @@ const startServer = async () => {
     })
   );
   server.express.use(isAuth);
-  server.express.use(cors());
   server.start({
+    port: process.env.PORT || 4000,
     cors: {
+      methods: ["POST", "OPTIONS"],
       credentials: true,
       //TODO: set origin to frontend url
       origin: ["*"]
