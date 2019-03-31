@@ -4,7 +4,7 @@ import { GraphQLServer } from "graphql-yoga";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
 import * as session from "express-session";
-import { ApolloServer } from "apollo-server";
+//import { ApolloServer } from "apollo-server";
 import { ITypeDefinitions } from "graphql-tools";
 import mutationResolvers from "./src/resolvers/mutations";
 import queryResolvers from "./src/resolvers/query";

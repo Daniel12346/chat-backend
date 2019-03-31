@@ -2,9 +2,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  BaseEntity,
-  BeforeInsert
+  BeforeInsert,
+  BaseEntity
 } from "typeorm";
+
 import { hashPassword } from "../utils/passwordService";
 
 @Entity()

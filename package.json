@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "description": "Awesome project developed with TypeORM.",
   "devDependencies": {
-    "@types/node": "^8.10.44",
+    "@types/graphql": "^14.2.0",
+    "@types/node": "^11.12.2",
     "babel-plugin-import-graphql": "^2.7.0",
     "ts-node": "^8.0.3",
-    "typeorm": "^0.2.14",
+    "typeorm": "^0.2.16",
     "typescript": "^3.4.1"
   },
   "dependencies": {
@@ -15,19 +16,22 @@
     "@types/express-session": "^1.15.12",
     "@types/yup": "^0.26.12",
     "apollo-server": "^2.4.8",
+    "apollo-server-core": "^2.4.8",
     "bcrypt": "^3.0.5",
     "cors": "^2.8.5",
     "express-session": "^1.15.6",
-    "graphql": "^0.13.0",
+    "global": "^4.3.2",
+    "graphql": "^14.2.0",
     "graphql-yoga": "^1.17.4",
     "nodemon": "^1.18.10",
-    "pg": "^7.3.0",
-    "reflect-metadata": "^0.1.10",
+    "pg": "^7.9.0",
+    "reflect-metadata": "^0.1.13",
     "tslint": "^5.14.0",
     "yup": "^0.27.0"
   },
   "scripts": {
-    "serve": "ts-node --files src/index.ts",
-    "start": "nodemon"
+    "serve": "ts-node --files index.ts",
+    "start": "node dist/index.js",
+    "start2": "cd dist&&node index.js"
   }
 }

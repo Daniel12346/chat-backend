@@ -1,0 +1,16 @@
+type MutationResult {
+  success: Boolean
+}
+
+type Mutation {
+  createUser(
+    firstName: String
+    lastName: String
+    email: String
+    password: String
+  ): User!
+  #TODO: find an explicit way to show deleteUser returns nothing
+  deleteUser(id: String): MutationResult
+  logIn(email: String, password: String): User
+  logOut: MutationResult
+}

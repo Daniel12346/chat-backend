@@ -1,0 +1,1 @@
+{"version":3,"file":"readSchema.js","sourceRoot":"","sources":["../../../src/utils/readSchema.ts"],"names":[],"mappings":";;AAAA,2BAAkC;AAClC;;;;;;;;;;;;;;;EAeE;AACF,MAAM,WAAW,GAAG,CAAC,GAAG,WAAW,EAAE,EAAE;AACrC,2DAA2D;AAC3D,CAAC,GAAG,WAAW,CAAC,CAAC,GAAG,CAAC,IAAI,CAAC,EAAE,CAAC,iBAAY,CAAC,IAAI,EAAE,EAAE,QAAQ,EAAE,OAAO,EAAE,CAAC,CAAC,CAAC;AAE1E,kBAAe,WAAW,CAAC"}
