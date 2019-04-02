@@ -1,6 +1,6 @@
-[
+module.exports = [
   {
-    name: "local",
+    name: "test",
     host: "localhost",
     type: "postgres",
     port: 5432,
@@ -8,7 +8,7 @@
     password: "test",
     database: "test",
     logging: false,
-    entities: ["src/entity/**/*.ts"],
+    entities: [__dirname + "/../**/**.entity{.ts,.js}"],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
     cli: {

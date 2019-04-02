@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import readSchemas from "./src/utils/readSchema";
-import { createConnection } from "typeorm";
+import { createConnection, getConnectionOptions } from "typeorm";
 import * as session from "express-session";
 import { ApolloServer, gql } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutations";
@@ -49,48 +49,18 @@ const createServer = () => {
 
 const startServer = async () => {
   const server = createServer();
-  //the settings are here because typeorm could not read the databases' names from the ormconfig
-  const connection = await createConnection(
-    process.env.NODE_ENV === "development"
-      ? {
-          name: "local",
-          host: "localhost",
-          type: "postgres",
-          port: 5432,
-          username: "test",
-          password: "test",
-          database: "test",
-          logging: false,
-          entities: ["src/entity/**/*.ts"],
-          migrations: ["src/migration/**/*.ts"],
-          subscribers: ["src/subscriber/**/*.ts"],
-          cli: {
-            entitiesDir: "src/entity",
-            migrationsDir: "src/migration",
-            subscribersDir: "src/subscriber"
-          }
-        }
-      : {
-          name: "heroku",
-          url: process.env.DATABASE_URL,
-          type: "postgres",
 
-          logging: false,
-          entities: ["src/entity/**/*.ts"],
-          migrations: ["src/migration/**/*.ts"],
-          subscribers: ["src/subscriber/**/*.ts"],
-          cli: {
-            entitiesDir: "src/entity",
-            migrationsDir: "src/migration",
-            subscribersDir: "src/subscriber"
-          }
-        }
+  const conn = await getConnectionOptions(
+    process.env.NODE_ENV === "development" ? "test" : "heroku"
   );
+  console.log(conn);
+
+  const connection = await createConnection("test");
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
   await server.applyMiddleware({ app, path: "/graphql" });
-  app.listen(4000);
+  app.listen(process.env.PORT || 4000);
 };
 
 export default startServer;
