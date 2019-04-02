@@ -8,13 +8,13 @@ const apollo_server_express_1 = require("apollo-server-express");
 const mutations_1 = require("./src/resolvers/mutations");
 const query_1 = require("./src/resolvers/query");
 const auth_1 = require("./src/middleware/auth");
-const express_1 = require("express");
+const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 //setting up the middleware
-const app = express_1.default();
-app.use(cors());
+const app = express();
+app.use(cors({ origin: "*" }));
 app.use(session({
     secret: "karnivool125",
     cookie: { maxAge: 60000, secure: false },
@@ -32,9 +32,9 @@ const createServer = () => {
     return new apollo_server_express_1.ApolloServer({
         typeDefs,
         resolvers,
-        context: ({ request }) => ({
-            req: request,
-            session: request.session
+        context: ({ req }) => ({
+            req: req,
+            session: req.session
         })
     });
 };
@@ -78,6 +78,7 @@ const startServer = async () => {
     await connection.synchronize();
     //TOOD: custom store (redis)
     await server.applyMiddleware({ app, path: "/graphql" });
+    app.listen(4000);
 };
 exports.default = startServer;
 //# sourceMappingURL=startServer.js.map
