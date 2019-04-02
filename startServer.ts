@@ -1,20 +1,31 @@
 import "reflect-metadata";
-import { GraphQLServer } from "graphql-yoga";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
 import * as session from "express-session";
-//import { ApolloServer } from "apollo-server";
-import { ITypeDefinitions } from "graphql-tools";
+import { ApolloServer, gql } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutations";
 import queryResolvers from "./src/resolvers/query";
 import isAuth from "./src/middleware/auth";
-import { Request } from "express";
-//import * as cors from "cors";
+import Express, { Request } from "express";
+import * as cors from "cors";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const allResolvers = {
+//setting up the middleware
+const app = Express();
+app.use(cors());
+app.use(
+  session({
+    secret: "karnivool125",
+    cookie: { maxAge: 60000, secure: false },
+    resave: false,
+    saveUninitialized: true
+  })
+);
+app.use(isAuth);
+
+const resolvers = {
   ...mutationResolvers,
   ...queryResolvers
 };
@@ -24,9 +35,10 @@ const createServer = () => {
     "./src/schemas/mutation.gql",
     "./src/schemas/query.gql"
   );
-  return new GraphQLServer({
-    typeDefs: allSchemas as ITypeDefinitions,
-    resolvers: allResolvers,
+  const typeDefs = gql(allSchemas.join());
+  return new ApolloServer({
+    typeDefs,
+    resolvers,
     context: ({ request }: { [key: string]: Request }) => ({
       req: request,
       session: request.session
@@ -76,27 +88,7 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  /* server.express.use(
-    cors({ credentials: true, origin: true, methods: ["POST", "OPTIONS"] })
-  );*/
-  server.express.use(
-    session({
-      secret: "karnivool125",
-      cookie: { maxAge: 60000, secure: false },
-      resave: false,
-      saveUninitialized: true
-    })
-  );
-  server.express.use(isAuth);
-  server.start({
-    port: process.env.PORT || 4000,
-    cors: {
-      methods: ["POST", "GET"],
-      credentials: true,
-      //TODO: set origin to frontend url
-      origin: ["*"]
-    }
-  });
+  await server.applyMiddleware({ app, path: "/graphql" });
 };
 
 export default startServer;
