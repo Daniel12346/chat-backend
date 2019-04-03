@@ -22,7 +22,7 @@ module.exports = [
     name: "heroku",
     url: process.env.DATABASE_URL,
     type: "postgres",
-
+    synchronize: true,
     logging: false,
     entities: ["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],

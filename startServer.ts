@@ -67,6 +67,7 @@ const startServer = async () => {
   );
 
   const connection = await createConnection(conn);
+  console.log(connection);
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
