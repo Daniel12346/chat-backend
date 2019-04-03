@@ -22,13 +22,13 @@ app.use(session({
     saveUninitialized: true
 }));
 app.use(auth_1.default);
+const allSchemas = readSchema_1.default("./src/schemas/user.gql", "./src/schemas/mutation.gql", "./src/schemas/query.gql");
+const typeDefs = apollo_server_express_1.gql(allSchemas.join());
 const resolvers = {
     ...mutations_1.default,
     ...query_1.default
 };
 const createServer = () => {
-    const allSchemas = readSchema_1.default("./src/schemas/user.gql", "./src/schemas/mutation.gql", "./src/schemas/query.gql");
-    const typeDefs = apollo_server_express_1.gql(allSchemas.join());
     return new apollo_server_express_1.ApolloServer({
         typeDefs,
         resolvers,
@@ -39,46 +39,17 @@ const createServer = () => {
     });
 };
 const startServer = async () => {
+    const port = process.env.PORT || 4000;
     const server = createServer();
-    //the settings are here because typeorm could not read the databases' names from the ormconfig
-    const connection = await typeorm_1.createConnection(process.env.NODE_ENV === "development"
-        ? {
-            name: "local",
-            host: "localhost",
-            type: "postgres",
-            port: 5432,
-            username: "test",
-            password: "test",
-            database: "test",
-            logging: false,
-            entities: ["src/entity/**/*.ts"],
-            migrations: ["src/migration/**/*.ts"],
-            subscribers: ["src/subscriber/**/*.ts"],
-            cli: {
-                entitiesDir: "src/entity",
-                migrationsDir: "src/migration",
-                subscribersDir: "src/subscriber"
-            }
-        }
-        : {
-            name: "heroku",
-            url: process.env.DATABASE_URL,
-            type: "postgres",
-            logging: false,
-            entities: ["src/entity/**/*.ts"],
-            migrations: ["src/migration/**/*.ts"],
-            subscribers: ["src/subscriber/**/*.ts"],
-            cli: {
-                entitiesDir: "src/entity",
-                migrationsDir: "src/migration",
-                subscribersDir: "src/subscriber"
-            }
-        });
+    const conn = await typeorm_1.getConnectionOptions(process.env.NODE_ENV === "development" ? "default" : "heroku");
+    const connection = await typeorm_1.createConnection(conn);
     //TODO: remove this line in production (?)
     await connection.synchronize();
     //TOOD: custom store (redis)
     await server.applyMiddleware({ app, path: "/graphql" });
-    app.listen(4000);
+    app.listen(port, () => {
+        console.log(`Listening to port: ${port}`);
+    });
 };
 exports.default = startServer;
 //# sourceMappingURL=startServer.js.map

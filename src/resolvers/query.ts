@@ -7,14 +7,20 @@ const me = (_, __, { req, session }) => {
   return User.findOne({ where: { id: session.userId } });
 };
 
+//finds a single user by id
 const user = (_, { id }: { [key: string]: string }, { req, session }) => {
   return User.findOne({ where: { id } });
 };
 
+//finds all users
+const users = async () => {
+  return User.find();
+};
 const queryResolvers = {
   Query: {
     me,
-    user
+    user,
+    users
   }
 };
 

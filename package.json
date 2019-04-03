@@ -11,7 +11,6 @@
     "@types/yup": "^0.26.12",
     "babel-plugin-import-graphql": "^2.7.0",
     "nodemon": "^1.18.10",
-    "ts-node": "^8.0.3",
     "typescript": "^3.4.1"
   },
   "dependencies": {
@@ -26,14 +25,15 @@
     "graphql-yoga": "^1.17.4",
     "pg": "^7.9.0",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^8.0.3",
     "tslint": "^5.14.0",
     "typeorm": "^0.2.16",
     "yup": "^0.27.0"
   },
   "scripts": {
-    "build": "tsc",
+    "heroku-postbuild": "tsc",
     "serve": "ts-node --files index.ts",
     "start2": "node dist/index.js",
-    "start": "cd dist&&node index.js"
+    "start": "nodemon"
   }
 }

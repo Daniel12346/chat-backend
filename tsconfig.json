@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+    "lib": ["dom", "es6", "es2017", "esnext", "esnext.asynciterable"],
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node",
@@ -17,9 +17,11 @@
   "exclude": ["node_modules"],
   "include": [
     "./*.ts",
+    "./*.d.ts",
     "./src/schemas",
     "./src/**/*.ts",
     "index.ts",
-    "ormconfig.js"
+    "ormconfig.js",
+    "./src/types/index.d.ts"
   ]
 }

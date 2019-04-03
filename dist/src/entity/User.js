@@ -10,8 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const typeorm_2 = require("typeorm");
 const passwordService_1 = require("../utils/passwordService");
-let User = class User extends typeorm_1.BaseEntity {
+let User = class User extends typeorm_2.BaseEntity {
     async hash() {
         this.password = await passwordService_1.hashPassword(this.password);
     }

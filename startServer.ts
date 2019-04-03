@@ -15,7 +15,7 @@ dotenv.config();
 
 //setting up the middleware
 const app = express();
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(
   session({
     secret: "karnivool125",
@@ -26,17 +26,17 @@ app.use(
 );
 app.use(isAuth);
 
+const allSchemas = readSchemas(
+  "./src/schemas/user.gql",
+  "./src/schemas/mutation.gql",
+  "./src/schemas/query.gql"
+);
+const typeDefs = gql(allSchemas.join());
 const resolvers = {
   ...mutationResolvers,
   ...queryResolvers
 };
 const createServer = () => {
-  const allSchemas = readSchemas(
-    "./src/schemas/user.gql",
-    "./src/schemas/mutation.gql",
-    "./src/schemas/query.gql"
-  );
-  const typeDefs = gql(allSchemas.join());
   return new ApolloServer({
     typeDefs,
     resolvers,
@@ -48,19 +48,22 @@ const createServer = () => {
 };
 
 const startServer = async () => {
+  const port = process.env.PORT || 4000;
+
   const server = createServer();
 
   const conn = await getConnectionOptions(
-    process.env.NODE_ENV === "development" ? "test" : "heroku"
+    process.env.NODE_ENV === "development" ? "default" : "heroku"
   );
-  console.log(conn);
 
-  const connection = await createConnection("test");
+  const connection = await createConnection(conn);
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
   await server.applyMiddleware({ app, path: "/graphql" });
-  app.listen(process.env.PORT || 4000);
+  app.listen(port, () => {
+    console.log(`Listening to port: ${port}`);
+  });
 };
 
 export default startServer;
