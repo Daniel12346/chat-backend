@@ -14,7 +14,11 @@ const dotenv = require("dotenv");
 dotenv.config();
 //setting up the middleware
 const app = express();
-app.use(cors({ origin: "*" }));
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true
+}));
 app.use(session({
     secret: "karnivool125",
     cookie: { maxAge: 60000, secure: false },
@@ -32,6 +36,8 @@ const createServer = () => {
     return new apollo_server_express_1.ApolloServer({
         typeDefs,
         resolvers,
+        playground: true,
+        introspection: true,
         context: ({ req }) => ({
             req: req,
             session: req.session

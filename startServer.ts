@@ -15,7 +15,14 @@ dotenv.config();
 
 //setting up the middleware
 const app = express();
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true
+  })
+);
 app.use(
   session({
     secret: "karnivool125",
@@ -40,6 +47,9 @@ const createServer = () => {
   return new ApolloServer({
     typeDefs,
     resolvers,
+    playground: true,
+    introspection: true,
+
     context: ({ req }: { [key: string]: Request }) => ({
       req: req,
       session: req.session
@@ -60,7 +70,7 @@ const startServer = async () => {
   //TODO: remove this line in production (?)
   await connection.synchronize();
   //TOOD: custom store (redis)
-  await server.applyMiddleware({ app, path: "/graphql" });
+  await server.applyMiddleware({ app });
   app.listen(port, () => {
     console.log(`Listening to port: ${port}`);
   });
