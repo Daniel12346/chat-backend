@@ -81,7 +81,16 @@ const ormConfig: PostgresConnectionOptions[] = [
   {
     url: process.env.DATABASE_URL,
     ssl: true,
-    type: "postgres"
+    type: "postgres",
+    synchronize: true,
+    entities: ["src/entity/**/*.ts"],
+    migrations: ["src/migration/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"],
+    cli: {
+      entitiesDir: "src/entity",
+      migrationsDir: "src/migration",
+      subscribersDir: "src/subscriber"
+    }
   }
 ];
 /*
@@ -103,15 +112,13 @@ const startServer = async () => {
   const port = process.env.PORT || 4000;
 
   const server = createServer();
-  const conn = await createConnection(
+  await createConnection(
     process.env.NODE_ENV === "development"
       ? //local database
-        (ormConfig[1] as PostgresConnectionOptions)
+        (ormConfig[0] as PostgresConnectionOptions)
       : //heroku database
         (ormConfig[1] as PostgresConnectionOptions)
   );
-
-  ormConfig && console.log(conn);
 
   //TOOD: custom store (redis)
   await server.applyMiddleware({ app });
