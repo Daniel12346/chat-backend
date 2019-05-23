@@ -6,13 +6,17 @@
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node",
-    "strictFunctionTypes": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "esModuleInterop": true,
+    //TODO: generate types from schemas and remove this
+    "noImplicitAny": false
   },
   "exclude": ["node_modules"],
   "include": [

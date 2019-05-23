@@ -2,6 +2,10 @@ import { User } from "../entity/User";
 import * as yup from "yup";
 import { comparePassword } from "../utils/passwordService";
 import { Request } from "express";
+import { isDev } from "../utils";
+import { UserInputError } from "apollo-server-core";
+
+//TODO: error handling, move input validation to frontend
 
 const userInputSchema = yup.object().shape({
   firstName: yup.string().min(1),
@@ -36,7 +40,7 @@ const createUser = async (_, userInput: UserInput): Promise<User> => {
     });
   } catch (e) {
     //TODO: yup error formatting
-    throw new Error(e);
+    throw new UserInputError(e);
   }
 
   const usedEmail = await User.findOne({ where: { email: userInput.email } });
@@ -67,20 +71,20 @@ const logIn = async (_, { email, password }, { req, session }: Context) => {
     throw new Error("A user is already logged in");
   }
   const user = await User.findOne({ where: { email } });
-
   //throwing an error if a user with the given email is not found
   if (!user) {
-    throw new Error("Email not found");
+    throw new Error(isDev ? "Incorrect email" : "Incorrect password or email");
   }
   const hashed = user.password;
+
   //checking if the passwords match (using bcrypt)
-  const match = await comparePassword(password, hashed);
-  if (!match) {
-    throw new Error("Incorrect password");
+  const isMatching = await comparePassword(password, hashed);
+  if (!isMatching) {
+    throw new Error(
+      isDev ? "Incorrect password" : "Incorrect password or email"
+    );
   }
-
-  req.session.userId = user.id;
-
+  session.userId = user.id;
   //TOOD: decide if it needs to return the user
   return user;
 };

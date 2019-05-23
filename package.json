@@ -12,6 +12,7 @@
     "babel-plugin-import-graphql": "^2.7.0"
   },
   "dependencies": {
+    "@types/dotenv": "^6.1.1",
     "apollo-server-core": "^2.4.8",
     "apollo-server-express": "^2.4.8",
     "bcrypt": "^3.0.5",
@@ -33,7 +34,6 @@
   },
   "scripts": {
     "serve": "ts-node --files index.ts",
-    "start2": "node dist/index.js",
     "start": "nodemon"
   }
 }

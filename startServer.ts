@@ -1,16 +1,15 @@
 import "reflect-metadata";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
-import * as session from "express-session";
+import session from "express-session";
 import { ApolloServer, gql } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutations";
 import queryResolvers from "./src/resolvers/query";
 import isAuth from "./src/middleware/auth";
-import * as express from "express";
-import { Request } from "express";
-import * as cors from "cors";
-import * as dotenv from "dotenv";
-//import * as PostgresConnectionStringParser from "pg-connection-string";
+//import * as express from "express";
+import express, { Request } from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 dotenv.config();
@@ -20,17 +19,16 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: true,
     credentials: true
   })
 );
 app.use(
   session({
     secret: "karnivool125",
-    cookie: { maxAge: 60000, secure: false },
+    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false },
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
   })
 );
 app.use(isAuth);
@@ -51,7 +49,6 @@ const createServer = () => {
     resolvers,
     playground: true,
     introspection: true,
-
     context: ({ req }: { [key: string]: Request }) => ({
       req: req,
       session: req.session
@@ -121,7 +118,9 @@ const startServer = async () => {
   );
 
   //TOOD: custom store (redis)
-  await server.applyMiddleware({ app });
+
+  //setting cors to false so apollo server does not override the cors settings
+  await server.applyMiddleware({ app, cors: false });
   app.listen(port, () => {
     console.log(`Listening to port: ${port}`);
   });

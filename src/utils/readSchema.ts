@@ -15,7 +15,7 @@ const readSchema = (schemaPath: string) =>
       throw new Error("Schema reading error:" + err);
     });
 */
-const readSchemas = (...schemaPaths) =>
+const readSchemas = (...schemaPaths: string[]) =>
   //returns an array of resolved promises of the schema paths
   [...schemaPaths].map(path => readFileSync(path, { encoding: "UTF-8" }));
 
