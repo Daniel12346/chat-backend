@@ -3,10 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BeforeInsert,
-  BaseEntity
+  BaseEntity,
+  ManyToMany,
+  JoinTable
 } from "typeorm";
 
 import { hashPassword } from "../utils/passwordService";
+import { Message } from "./Message";
 
 @Entity()
 export class User extends BaseEntity {
@@ -24,6 +27,10 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @ManyToMany(() => Message, { cascade: true })
+  @JoinTable()
+  messages: Message[];
 
   @BeforeInsert()
   async hash() {

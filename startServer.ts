@@ -1,16 +1,16 @@
 import "reflect-metadata";
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
-import session from "express-session";
 import { ApolloServer, gql } from "apollo-server-express";
-import mutationResolvers from "./src/resolvers/mutations";
+import mutationResolvers from "./src/resolvers/mutation";
 import queryResolvers from "./src/resolvers/query";
+import subscriptionResolvers from "./src/resolvers/subscription";
 import isAuth from "./src/middleware/auth";
-//import * as express from "express";
 import express, { Request } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+import http from "http";
 
 dotenv.config();
 
@@ -23,25 +23,29 @@ app.use(
     credentials: true
   })
 );
+/*
 app.use(
   session({
-    secret: "karnivool125",
+    secret: process.env.SECRET,
     cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false },
     resave: false,
     saveUninitialized: false
   })
-);
+);*/
 app.use(isAuth);
 
 const allSchemas = readSchemas(
   "./src/schemas/user.gql",
   "./src/schemas/mutation.gql",
-  "./src/schemas/query.gql"
+  "./src/schemas/query.gql",
+  "./src/schemas/message.gql",
+  "./src/schemas/subscription.gql"
 );
 const typeDefs = gql(allSchemas.join());
 const resolvers = {
   ...mutationResolvers,
-  ...queryResolvers
+  ...queryResolvers,
+  ...subscriptionResolvers
 };
 const createServer = () => {
   return new ApolloServer({
@@ -50,8 +54,7 @@ const createServer = () => {
     playground: true,
     introspection: true,
     context: ({ req }: { [key: string]: Request }) => ({
-      req: req,
-      session: req.session
+      req
     })
   });
 };
@@ -69,6 +72,7 @@ const ormConfig: PostgresConnectionOptions[] = [
     entities: ["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
+    synchronize: true,
     cli: {
       entitiesDir: "src/entity",
       migrationsDir: "src/migration",
@@ -90,20 +94,6 @@ const ormConfig: PostgresConnectionOptions[] = [
     }
   }
 ];
-/*
-if (process.env.DATABASE_URL) {
-  const {
-    host,
-    password,
-    user: username,
-    port,
-    database
-  } = PostgresConnectionStringParser.parse(
-    "postgres://mtxrbrvwlouigd:64c2e8e865ff26261f63be03142a8a7d5b98858811f810bd25dec86b8a289d5b@ec2-54-228-252-67.eu-west-1.compute.amazonaws.com:5432/dk0m3gfqksqdh"
-  );
-  ormConfig[1] = { ...ormConfig[1], host, password, username, port, database };
-  console.log(ormConfig[1]);
-}*/
 
 const startServer = async () => {
   const port = process.env.PORT || 4000;
@@ -117,12 +107,19 @@ const startServer = async () => {
         (ormConfig[1] as PostgresConnectionOptions)
   );
 
+  const httpServer = http.createServer(app);
+
   //TOOD: custom store (redis)
 
   //setting cors to false so apollo server does not override the cors settings
-  await server.applyMiddleware({ app, cors: false });
-  app.listen(port, () => {
-    console.log(`Listening to port: ${port}`);
+  server.applyMiddleware({ app, cors: false });
+
+  server.installSubscriptionHandlers(httpServer);
+  httpServer.listen(port, () => {
+    console.log(`Listening to port: ${port}${server.graphqlPath}`);
+    console.log(
+      `Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`
+    );
   });
 };
 

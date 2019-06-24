@@ -2,6 +2,16 @@ type MutationResult {
   success: Boolean
 }
 
+input UserInput {
+  email: String
+  password: String
+}
+
+input MessageInput {
+  receiverId: ID
+  content: String
+}
+
 type Mutation {
   createUser(
     firstName: String
@@ -9,8 +19,8 @@ type Mutation {
     email: String
     password: String
   ): User!
-  #TODO: find an explicit way to show deleteUser returns nothing
-  deleteUser(id: String): MutationResult
-  logIn(email: String, password: String): User
-  logOut: MutationResult
+  deleteUser(id: ID): MutationResult
+  #the string that is returned is a jwt
+  logIn(email: String, password: String): String
+  createMessage(receiverId: ID, content: String): Message
 }

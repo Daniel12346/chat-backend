@@ -1,14 +1,19 @@
 import { User } from "../entity/User";
+import { Message } from "../entity/Message";
 
-const me = (_, __, { req, session }) => {
+const me = (_, __, { req }) => {
   if (!req.isAuth) {
     throw new Error("Not authenticated");
   }
-  return User.findOne({ where: { id: session.userId } });
+  return User.findOne({ where: { id: req.userId } });
 };
 
+interface Context {
+  req: Request;
+}
+
 //finds a single user by id
-const user = (_, { id }: { [key: string]: string }, { req, session }) => {
+const user = (_, { id }: { [key: string]: string }, { req }: Context) => {
   return User.findOne({ where: { id } });
 };
 
@@ -16,11 +21,21 @@ const user = (_, { id }: { [key: string]: string }, { req, session }) => {
 const users = async () => {
   return User.find();
 };
+
+const messages = async () => {
+  try {
+    return Message.find();
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 const queryResolvers = {
   Query: {
     me,
     user,
-    users
+    users,
+    messages
   }
 };
 

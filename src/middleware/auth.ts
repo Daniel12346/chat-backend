@@ -1,19 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthenticationError } from "apollo-server-core";
 import { isDev } from "../utils";
-
+import jwt from "jsonwebtoken";
+//TODO: jwt
 export default (req: Request, res: Response, next: NextFunction) => {
   //TODO: error codes and other fixes
-  if (!req.session) {
+  const authHeader = req.get("Authorization");
+  if (!authHeader) {
     req.isAuth = false;
     if (isDev) {
-      throw new AuthenticationError("Session not found");
-    } else {
-      req.isAuth = false;
-      next();
+      throw new AuthenticationError("Auth header not found");
     }
+    return next();
   }
-  if (!req.session.userId) {
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    req.isAuth = false;
+    return next();
+  }
+  try {
+    const decoded: any = jwt.verify(token, process.env.SECRET);
+    req.userId = decoded.userId;
+  } catch {
     req.isAuth = false;
     return next();
   }
