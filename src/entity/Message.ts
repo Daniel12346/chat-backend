@@ -3,33 +3,30 @@ import {
   Column,
   Entity,
   BaseEntity,
-  JoinColumn,
-  ManyToMany
+  //ManyToMany,
+  ManyToOne,
+  JoinTable
   //ManyToOne
 } from "typeorm";
 import { User } from "./User";
-//import { Channel } from "./Channel";
+import { Chat } from "./Chat";
 @Entity()
 export class Message extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToMany(() => User, { cascade: true })
-  @JoinColumn()
+  @Column()
+  content: string;
+
+  @ManyToOne(type => User, user => user.messages)
+  @JoinTable()
   from: User;
 
-  @ManyToMany(() => User, { cascade: true })
-  @JoinColumn()
-  to: User;
+  @ManyToOne(type => Chat, chat => chat.messages)
+  @JoinTable()
+  chat: Chat;
   //TODO: | Group
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
-
-  @Column()
-  content: string;
-
-  /*
-  @ManyToOne(() => Channel)
-  channel: Channel;*/
 }

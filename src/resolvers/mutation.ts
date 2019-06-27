@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { Request } from "express";
 import { Message } from "../entity/Message";
 import pubsub, { MESSAGE_CREATED } from "../pubsub";
+import { Chat } from "../entity/Chat";
 
 //TODO: error handling, move input validation to frontend, generate types
 
@@ -40,8 +41,15 @@ interface Context {
   req: Request;
 }
 
+interface UserInput {
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 //TODO: refactor errors
-const createUser = async (_, input): Promise<User> => {
+const createUser = async (_, input: UserInput): Promise<User> => {
   try {
     await userInputSchema.validate({
       input
@@ -56,10 +64,13 @@ const createUser = async (_, input): Promise<User> => {
     throw new Error("Email already in use");
   }
 
-  const createdUser = User.create(input);
-
-  await createdUser.save();
-  return createdUser;
+  const user = new User();
+  user.email = input.email;
+  user.password = input.password;
+  user.firstName = input.firstName;
+  user.lastName = input.lastName;
+  await user.save();
+  return user;
 };
 
 const deleteUser = async (_, { id }): Promise<MutationResult> => {
@@ -73,27 +84,50 @@ const deleteUser = async (_, { id }): Promise<MutationResult> => {
   };
 };
 
-const createMessage = async (_, { receiverId, content }): Promise<Message> => {
+const createChat = async (_, { userId }, { req }): Promise<Chat> => {
+  try {
+    //the sender (the user that's logged in) TODO: req.userId
+    const user = await User.findOne({ where: { id: userId } });
+    //the receiver
+    const me = (await User.findOne({ where: { id: req.id } })) || user;
+    if (!me || !user) {
+      throw new Error();
+    }
+    const chat = new Chat();
+    chat.name = `${user.firstName} ${user.lastName}`;
+    chat.users = [user];
+    const createdChat = await chat.save();
+    return createdChat;
+  } catch (e) {
+    console.log("createMesage error", e);
+  }
+};
+
+const createMessage = async (
+  _,
+  { receiverId, chatId, content }
+): Promise<Message> => {
   //TODO: front end validation
 
   /*if (!req.userId) {
     throw new AuthenticationError("Not logged in");
+
+    const 
   }*/
   try {
     //the sender (the user that's logged in) TODO: req.userId
+    const chat = await Chat.findOne({ where: { id: chatId } });
     const from = await User.findOne({ where: { id: receiverId } });
-    //the receiver
-    const to = await User.findOne({ where: { id: receiverId } });
-    if (!from || !to) {
-      throw new Error("from/to not found");
+    if (chat) {
+      throw new Error("chat not found");
     }
     const message = new Message();
-    message.from = from;
-    message.to = to;
     message.content = content;
 
+    message.chat = chat;
+    //TODO: req
+    message.from = from;
     const createdMessage = await message.save();
-    console.log(createdMessage);
     //publishing the message for the messageCreated subscription
     await pubsub.publish(MESSAGE_CREATED, { messageCreated: createdMessage });
 
@@ -154,7 +188,8 @@ const mutationResolvers = {
     createUser,
     deleteUser,
     logIn,
-    createMessage
+    createMessage,
+    createChat
   }
 };
 

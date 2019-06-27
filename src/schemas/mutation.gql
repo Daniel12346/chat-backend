@@ -22,5 +22,6 @@ type Mutation {
   deleteUser(id: ID): MutationResult
   #the string that is returned is a jwt
   logIn(email: String, password: String): String
-  createMessage(receiverId: ID, content: String): Message
+  createMessage(receiverId: ID, chatId: ID, content: String): Message
+  createChat(userId: ID): Chat
 }

@@ -4,12 +4,13 @@ import {
   Column,
   BeforeInsert,
   BaseEntity,
-  ManyToMany,
-  JoinTable
+  OneToMany,
+  ManyToMany
 } from "typeorm";
 
 import { hashPassword } from "../utils/passwordService";
 import { Message } from "./Message";
+import { Chat } from "./Chat";
 
 @Entity()
 export class User extends BaseEntity {
@@ -28,8 +29,10 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @ManyToMany(() => Message, { cascade: true })
-  @JoinTable()
+  @ManyToMany(type => Chat, chat => chat.users)
+  chats: Chat[];
+
+  @OneToMany(() => Message, message => message.from)
   messages: Message[];
 
   @BeforeInsert()

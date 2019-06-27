@@ -1,8 +1,7 @@
 type Message {
   id: ID!
-  from: User!
-  to: User!
   content: String!
-  createdAt: Date
-  #channel:
+  from: User!
+  chat: Chat!
+  createdAt: Date!
 }

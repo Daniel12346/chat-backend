@@ -24,7 +24,9 @@ const users = async () => {
 
 const messages = async () => {
   try {
-    return Message.find();
+    const m = await Message.find();
+    console.log(m);
+    return m;
   } catch (e) {
     throw new Error(e);
   }

@@ -23,19 +23,12 @@ app.use(
     credentials: true
   })
 );
-/*
-app.use(
-  session({
-    secret: process.env.SECRET,
-    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false },
-    resave: false,
-    saveUninitialized: false
-  })
-);*/
+
 app.use(isAuth);
 
 const allSchemas = readSchemas(
   "./src/schemas/user.gql",
+  "./src/schemas/chat.gql",
   "./src/schemas/mutation.gql",
   "./src/schemas/query.gql",
   "./src/schemas/message.gql",
@@ -73,6 +66,7 @@ const ormConfig: PostgresConnectionOptions[] = [
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
     synchronize: true,
+    //dropSchema: true,
     cli: {
       entitiesDir: "src/entity",
       migrationsDir: "src/migration",

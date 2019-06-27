@@ -3,7 +3,8 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  messages: [Message]
+  chats: [Chat]!
+  messages: [Message]!
 }
 
 scalar Date
