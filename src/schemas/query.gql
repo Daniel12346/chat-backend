@@ -2,5 +2,7 @@ type Query {
   users: [User]!
   user(id: String): User!
   me: User!
-  messages: [Message]
+  messages: [Message]!
+  chats: [Chat]!
+  chat(id: String): Chat!
 }

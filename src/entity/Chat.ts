@@ -19,7 +19,6 @@ export class Chat extends BaseEntity {
   @Column()
   name: string;
 
-  //TODO
   @ManyToMany(type => User, user => user.chats)
   @JoinTable()
   users: User[];

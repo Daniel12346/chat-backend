@@ -113,12 +113,15 @@ const createMessage = async (
     throw new AuthenticationError("Not logged in");
 
     const 
-  }*/
+  */
+
   try {
     //the sender (the user that's logged in) TODO: req.userId
-    const chat = await Chat.findOne({ where: { id: chatId } });
+    const chat = await Chat.findOne({
+      where: { id: chatId }
+    });
     const from = await User.findOne({ where: { id: receiverId } });
-    if (chat) {
+    if (!chat) {
       throw new Error("chat not found");
     }
     const message = new Message();
@@ -165,23 +168,6 @@ const logIn = async (_, { email, password }, { req }: Context) => {
 };
 
 //TODO: logging out (jwt blacklist)
-/*
-const logOut = async (_, __, { req }) => {
-  if (!req.userId) {
-    throw new Error("No user is logged in");
-  }
-
-  try {
-    //logging the user out by destroying the session
-    await session.destroy();
-  } catch (e) {
-    throw new Error(e);
-  }
-  return {
-    success: true
-  };
-};
-*/
 
 const mutationResolvers = {
   Mutation: {
