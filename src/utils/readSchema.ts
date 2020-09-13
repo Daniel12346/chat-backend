@@ -17,6 +17,6 @@ const readSchema = (schemaPath: string) =>
 */
 const readSchemas = (...schemaPaths: string[]) =>
   //returns an array of resolved promises of the schema paths
-  [...schemaPaths].map(path => readFileSync(path, { encoding: "UTF-8" }));
+  [...schemaPaths].map((path) => readFileSync(path));
 
 export default readSchemas;

@@ -16,13 +16,7 @@ dotenv.config();
 
 //setting up the middleware
 const app = express();
-
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-);
+app.use(cors() as any);
 
 app.use(isAuth);
 
@@ -38,7 +32,7 @@ const typeDefs = gql(allSchemas.join());
 const resolvers = {
   ...mutationResolvers,
   ...queryResolvers,
-  ...subscriptionResolvers
+  ...subscriptionResolvers,
 };
 const createServer = () => {
   return new ApolloServer({
@@ -47,8 +41,8 @@ const createServer = () => {
     playground: true,
     introspection: true,
     context: ({ req }: { [key: string]: Request }) => ({
-      req
-    })
+      req,
+    }),
   });
 };
 
@@ -57,7 +51,7 @@ const ormConfig: PostgresConnectionOptions[] = [
   {
     host: "localhost",
     type: "postgres",
-    port: 5432,
+    port: 5400,
     username: "test",
     password: "test",
     database: "test",
@@ -70,8 +64,8 @@ const ormConfig: PostgresConnectionOptions[] = [
     cli: {
       entitiesDir: "src/entity",
       migrationsDir: "src/migration",
-      subscribersDir: "src/subscriber"
-    }
+      subscribersDir: "src/subscriber",
+    },
   },
   {
     url: process.env.DATABASE_URL,
@@ -84,9 +78,9 @@ const ormConfig: PostgresConnectionOptions[] = [
     cli: {
       entitiesDir: "src/entity",
       migrationsDir: "src/migration",
-      subscribersDir: "src/subscriber"
-    }
-  }
+      subscribersDir: "src/subscriber",
+    },
+  },
 ];
 
 const startServer = async () => {

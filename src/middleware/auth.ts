@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction } from "express";
 import { AuthenticationError } from "apollo-server-core";
 import { isDev } from "../utils";
 import jwt from "jsonwebtoken";
 //TODO: jwt
-export default (req: Request, res: Response, next: NextFunction) => {
+export default (
+  req: Express.Request,
+  res: Express.Response,
+  next: NextFunction
+) => {
   //TODO: error codes and other fixes
-  const authHeader = req.get("Authorization");
+  const authHeader = (req as any).get("Authorization");
   if (!authHeader) {
     req.isAuth = false;
     if (isDev) {

@@ -1,22 +1,22 @@
-import { User } from "../entity/User";
+import { User } from "../@types/express/entity/User";
 import * as yup from "yup";
 import { comparePasswords } from "../utils/passwordService";
 import { isDev } from "../utils";
 import { UserInputError } from "apollo-server-core";
 import jwt from "jsonwebtoken";
-import { Request } from "express";
-import { Message } from "../entity/Message";
+
+import { Message } from "../@types/express/entity/Message";
 import pubsub, { MESSAGE_CREATED } from "../pubsub";
-import { Chat } from "../entity/Chat";
+import { Chat } from "../@types/express/entity/Chat";
 
 //TODO: error handling, move input validation to frontend, generate types
 
-//TODO: FIX INPUTS!
+//TODO: FIX INPUTS
 const userInputSchema = yup.object().shape({
   firstName: yup.string().min(1),
   lastName: yup.string().min(1),
   email: yup.string().email(),
-  password: yup.string().min(8)
+  password: yup.string().min(8),
 });
 
 /*
@@ -38,7 +38,7 @@ interface MutationResult {
 }
 
 interface Context {
-  req: Request;
+  req: Express.Request;
 }
 
 interface UserInput {
@@ -52,7 +52,7 @@ interface UserInput {
 const createUser = async (_, input: UserInput): Promise<User> => {
   try {
     await userInputSchema.validate({
-      input
+      input,
     });
   } catch (e) {
     //TODO: yup error formatting
@@ -80,7 +80,7 @@ const deleteUser = async (_, { id }): Promise<MutationResult> => {
   }
   User.delete(user);
   return {
-    success: true
+    success: true,
   };
 };
 
@@ -118,7 +118,7 @@ const createMessage = async (
   try {
     //the sender (the user that's logged in) TODO: req.userId
     const chat = await Chat.findOne({
-      where: { id: chatId }
+      where: { id: chatId },
     });
     const from = await User.findOne({ where: { id: receiverId } });
     if (!chat) {
@@ -161,7 +161,7 @@ const logIn = async (_, { email, password }, { req }: Context) => {
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
-    expiresIn: "1d"
+    expiresIn: "1d",
   });
   //TOOD: decide if it needs to return the user
   return token;
@@ -175,8 +175,8 @@ const mutationResolvers = {
     deleteUser,
     logIn,
     createMessage,
-    createChat
-  }
+    createChat,
+  },
 };
 
 export default mutationResolvers;

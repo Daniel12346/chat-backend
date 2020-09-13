@@ -5,10 +5,10 @@ import {
   BeforeInsert,
   BaseEntity,
   OneToMany,
-  ManyToMany
+  ManyToMany,
 } from "typeorm";
 
-import { hashPassword } from "../utils/passwordService";
+import { hashPassword } from "../../../utils/passwordService";
 import { Message } from "./Message";
 import { Chat } from "./Chat";
 
@@ -29,10 +29,10 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @ManyToMany(type => Chat, chat => chat.users)
+  @ManyToMany((type) => Chat, (chat) => chat.users)
   chats: Chat[];
 
-  @OneToMany(() => Message, message => message.from)
+  @OneToMany(() => Message, (message) => message.from)
   messages: Message[];
 
   @BeforeInsert()

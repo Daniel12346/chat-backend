@@ -1,6 +1,6 @@
-import { User } from "../entity/User";
-import { Message } from "../entity/Message";
-import { Chat } from "../entity/Chat";
+import { User } from "../@types/express/entity/User";
+import { Message } from "../@types/express/entity/Message";
+import { Chat } from "../@types/express/entity/Chat";
 
 const me = (_, __, { req }) => {
   if (!req.isAuth) {
@@ -55,8 +55,8 @@ const queryResolvers = {
     users,
     messages,
     chats,
-    chat
-  }
+    chat,
+  },
 };
 
 export default queryResolvers;
