@@ -26,7 +26,7 @@
     "./src/**/*.ts",
     "index.ts",
     "ormconfig.js",
-    "src/@types/index.d.ts"
+    "*.d.ts"
   ],
-  "typeRoots": ["src/@types", "./node_modules/@types"]
+  "typeRoots": ["./src/@types", "./node_modules/@types"]
 }

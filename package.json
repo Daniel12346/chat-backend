@@ -23,7 +23,7 @@
     "graphql": "^15.3.0",
     "graphql-yoga": "^1.17.4",
     "jsonwebtoken": "^8.5.1",
-    "nodemon": "^1.18.10",
+    "nodemon": "^2.0.4",
     "pg": "^8.3.3",
     "pg-connection-string": "^2.3.0",
     "reflect-metadata": "^0.1.13",
@@ -35,7 +35,7 @@
     "yup": "^0.27.0"
   },
   "scripts": {
-    "serve": "ts-node --files index.ts",
-    "start": "nodemon"
+    "start": "ts-node index.ts",
+    "serve": "nodemon -x ts-node index.ts"
   }
 }

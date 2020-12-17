@@ -1,5 +1,5 @@
 {
-  "watch": ["./**"],
+  "watch": ["./**", "tsconfig.json"],
   "ext": "ts, gql, json, js",
   "exec": "npm run serve"
 }

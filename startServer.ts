@@ -84,15 +84,16 @@ const ormConfig: PostgresConnectionOptions[] = [
 ];
 
 const startServer = async () => {
-  const port = process.env.PORT || 4000;
+  const port = process.env.PORT || 8080;
 
   const server = createServer();
   await createConnection(
-    process.env.NODE_ENV === "development"
+    ormConfig[1]
+    /*process.env.NODE_ENV === "development"
       ? //local database
         (ormConfig[0] as PostgresConnectionOptions)
       : //heroku database
-        (ormConfig[1] as PostgresConnectionOptions)
+        (ormConfig[1] as PostgresConnectionOptions)*/
   );
 
   const httpServer = http.createServer(app);
@@ -101,14 +102,16 @@ const startServer = async () => {
 
   //setting cors to false so apollo server does not override the cors settings
   server.applyMiddleware({ app, cors: false });
-
+  console.log(`PORT: ${process.env.PORT}`);
   server.installSubscriptionHandlers(httpServer);
-  httpServer.listen(port, () => {
+  httpServer.listen(
+    port /*() => {
     console.log(`Listening to port: ${port}${server.graphqlPath}`);
     console.log(
       `Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`
     );
-  });
+  }*/
+  );
 };
 
 export default startServer;

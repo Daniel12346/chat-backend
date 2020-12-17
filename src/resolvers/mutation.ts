@@ -142,7 +142,7 @@ const createMessage = async (
 
 const logIn = async (_, { email, password }, { req }: Context) => {
   //throwing an error if the user id is already set on req
-  if (req.userId) {
+  if ((req as any).userId) {
     throw new Error("A user is already logged in");
   }
   const user = await User.findOne({ where: { email } });
