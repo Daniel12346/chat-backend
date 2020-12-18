@@ -11,6 +11,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import http from "http";
+import { User } from "./src/@types/express/entity/User";
+import { Message } from "./src/@types/express/entity/Message";
+import { Chat } from "./src/@types/express/entity/Chat";
 
 dotenv.config();
 
@@ -56,7 +59,7 @@ const ormConfig: PostgresConnectionOptions[] = [
     password: "test",
     database: "test",
     logging: false,
-    entities: ["src/entity/**/*.ts"],
+    entities: [User, Message, Chat],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
     synchronize: true,
@@ -72,7 +75,8 @@ const ormConfig: PostgresConnectionOptions[] = [
     ssl: true,
     type: "postgres",
     synchronize: true,
-    entities: ["src/entity/**/*.ts"],
+    //TODO: test
+    entities: [User, Message, Chat],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
     cli: {
