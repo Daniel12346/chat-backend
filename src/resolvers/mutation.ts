@@ -2,7 +2,7 @@ import { User } from "../@types/express/entity/User";
 import * as yup from "yup";
 import { comparePasswords } from "../utils/passwordService";
 import { isDev } from "../utils";
-import { UserInputError } from "apollo-server-core";
+import { ApolloError, UserInputError } from "apollo-server-core";
 import jwt from "jsonwebtoken";
 
 import { Message } from "../@types/express/entity/Message";
@@ -91,9 +91,9 @@ const createChat = async (_, { userId }, { req }): Promise<Chat> => {
     //the receiver
     const user = await User.findOne({ where: { id: userId } });
     //the sender (the user that's logged in) TODO: req.userId
-    const me = (await User.findOne({ where: { id: req.id } }));
+    const me = (await User.findOne({ where: { id: req.userId } }));
     if (!me || !user) {
-      throw new Error();
+      throw new ApolloError("user not found");
     }
     const chat = new Chat();
     chat.name = null;
@@ -103,7 +103,7 @@ const createChat = async (_, { userId }, { req }): Promise<Chat> => {
     const createdChat = await chat.save();
     return createdChat;
   } catch (e) {
-    console.log("createMesage error", e);
+    throw e;
   }
 };
 
