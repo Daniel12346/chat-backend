@@ -101,6 +101,8 @@ const createChat = async (_, { userId }, { req }): Promise<Chat> => {
     chat.users = [user, me];
     chat.messages = [];
     const createdChat = await chat.save();
+    me.chats.push(createdChat);
+    user.chats.push(createdChat);
     return createdChat;
   } catch (e) {
     throw e;
@@ -117,7 +119,7 @@ const createMessage = async (
     const chat = await Chat.findOne({
       where: { id: chatId },
     });
-    const from = await User.findOne({ where: { id: req.id } });
+    const from = await User.findOne({ where: { id: req.userId } });
     if (!chat) {
       throw new Error("chat not found");
     }
