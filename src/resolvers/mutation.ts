@@ -69,6 +69,8 @@ const createUser = async (_, input: UserInput): Promise<User> => {
   user.password = input.password;
   user.firstName = input.firstName;
   user.lastName = input.lastName;
+  user.messages = [];
+  user.chats = [];
   await user.save();
   return user;
 };
@@ -86,16 +88,18 @@ const deleteUser = async (_, { id }): Promise<MutationResult> => {
 
 const createChat = async (_, { userId }, { req }): Promise<Chat> => {
   try {
-    //the sender (the user that's logged in) TODO: req.userId
-    const user = await User.findOne({ where: { id: userId } });
     //the receiver
-    const me = (await User.findOne({ where: { id: req.id } })) || user;
+    const user = await User.findOne({ where: { id: userId } });
+    //the sender (the user that's logged in) TODO: req.userId
+    const me = (await User.findOne({ where: { id: req.id } }));
     if (!me || !user) {
       throw new Error();
     }
     const chat = new Chat();
-    chat.name = `${user.firstName} ${user.lastName}`;
-    chat.users = [user];
+    chat.name = null;
+    //only group chats should have chat names
+    chat.users = [user, me];
+    chat.messages = [];
     const createdChat = await chat.save();
     return createdChat;
   } catch (e) {
@@ -105,30 +109,21 @@ const createChat = async (_, { userId }, { req }): Promise<Chat> => {
 
 const createMessage = async (
   _,
-  { receiverId, chatId, content }
+  { chatId, content }, { req }
 ): Promise<Message> => {
   //TODO: front end validation
-
-  /*if (!req.userId) {
-    throw new AuthenticationError("Not logged in");
-
-    const 
-  */
-
   try {
-    //the sender (the user that's logged in) TODO: req.userId
+    //the sender (the user that's logged in) 
     const chat = await Chat.findOne({
       where: { id: chatId },
     });
-    const from = await User.findOne({ where: { id: receiverId } });
+    const from = await User.findOne({ where: { id: req.id } });
     if (!chat) {
       throw new Error("chat not found");
     }
     const message = new Message();
     message.content = content;
-
     message.chat = chat;
-    //TODO: req
     message.from = from;
     const createdMessage = await message.save();
     //publishing the message for the messageCreated subscription

@@ -1,10 +1,10 @@
 import { User } from "../@types/express/entity/User";
 import { Message } from "../@types/express/entity/Message";
 import { Chat } from "../@types/express/entity/Chat";
-
+import { AuthenticationError } from "apollo-server-core";
 const me = (_, __, { req }) => {
   if (!req.isAuth) {
-    throw new Error("Not authenticated");
+    throw new AuthenticationError("Not authenticated");
   }
   return User.findOne({ where: { id: req.userId } });
 };
