@@ -38,5 +38,7 @@ export class User extends BaseEntity {
   @BeforeInsert()
   async hash() {
     this.password = await hashPassword(this.password);
+    this.chats = [];
+    this.messages = [];
   }
 }

@@ -6,7 +6,8 @@ import {
   OneToMany,
   CreateDateColumn,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  BeforeInsert
 } from "typeorm";
 import { User } from "./User";
 import { Message } from "./Message";
@@ -16,7 +17,7 @@ export class Chat extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @ManyToMany(type => User, user => user.chats)
@@ -29,4 +30,9 @@ export class Chat extends BaseEntity {
   //TODO: learn sql
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
+
+  @BeforeInsert()
+  async setUp() {
+    this.messages = [];
+  }
 }
