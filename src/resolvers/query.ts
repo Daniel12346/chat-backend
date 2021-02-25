@@ -6,7 +6,7 @@ const me = (_, __, { req }) => {
   if (!req.isAuth) {
     throw new AuthenticationError("Not authenticated");
   }
-  return User.findOne({ where: { id: req.userId } });
+  return User.findOne({ id: req.userId });
 };
 
 interface Context {
@@ -15,12 +15,12 @@ interface Context {
 
 //finds a single user by id
 const user = (_, { id }: { [key: string]: string }, { req }: Context) => {
-  return User.findOne({ where: { id } });
+  return User.findOne({ id }, { relations: ["messages", "chats"] });
 };
 
 //finds all users
 const users = async () => {
-  return User.find();
+  return User.find({ relations: ["messages", "chats"] });
 };
 
 const messages = async () => {
