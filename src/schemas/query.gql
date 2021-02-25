@@ -1,8 +1,8 @@
 type Query {
   users: [User]!
-  user(id: String): User!
-  me: User!
+  user(id: String): User
+  me: User
   messages: [Message]!
   chats: [Chat]!
-  chat(id: String): Chat!
+  chat(id: String): Chat
 }
