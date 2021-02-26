@@ -116,9 +116,15 @@ const createMessage = async (
   //TODO: front end validation
   try {
     const chat = await Chat.findOne({ id: chatId }, { relations: ["messages"] });
-    const from = await User.findOne({ id: req.userId });
+    const from = (await User.findOne({ where: { id: req.userId } }));
+
+    //    const from = await User.findOne({ id: req.userId });
     if (!chat) {
       throw new Error("chat not found");
+    }
+    if (!from) {
+      //TODO: maknut
+      throw new Error("message sender (from) not found");
     }
     const message = new Message();
     message.content = content;
