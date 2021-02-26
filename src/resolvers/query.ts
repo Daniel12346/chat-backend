@@ -2,17 +2,17 @@ import { User } from "../@types/express/entity/User";
 import { Message } from "../@types/express/entity/Message";
 import { Chat } from "../@types/express/entity/Chat";
 import { AuthenticationError } from "apollo-server-core";
-const me = (_, __, { req }) => {
-  if (!req.isAuth) {
-    throw new AuthenticationError("Not authenticated");
-  }
-  return User.findOne({ id: req.userId });
-};
 
 interface Context {
   req: Request;
 }
 
+const me = (_, __, { req }) => {
+  if (!req.isAuth) {
+    throw new AuthenticationError("Not authenticated");
+  }
+  return User.findOne({ id: req.userId }, { relations: ["messages", "chats", "chats.messages"] });
+};
 //finds a single user by id
 const user = (_, { id }: { [key: string]: string }, { req }: Context) => {
   return User.findOne({ id }, { relations: ["messages", "chats"] });
@@ -20,7 +20,7 @@ const user = (_, { id }: { [key: string]: string }, { req }: Context) => {
 
 //finds all users
 const users = async () => {
-  return User.find({ relations: ["messages", "chats"] });
+  return User.find();
 };
 
 const messages = async () => {
@@ -42,7 +42,7 @@ const chats = async () => {
 
 const chat = async (_, { id }) => {
   try {
-    return await Chat.findOne({ where: { id } });
+    return await Chat.findOne({ id }, { relations: ["users", "messages", "message.from"] });
   } catch (e) {
     throw new Error(e);
   }
