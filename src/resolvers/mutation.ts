@@ -115,11 +115,8 @@ const createMessage = async (
 ): Promise<Message> => {
   //TODO: front end validation
   try {
-    //the sender (the user that's logged in) 
-    const chat = await Chat.findOne({
-      where: { id: chatId },
-    });
-    const from = await User.findOne({ where: { id: req.userId } });
+    const chat = await Chat.findOne({ id: chatId }, { relations: ["messages"] });
+    const from = await User.findOne({ id: req.userId });
     if (!chat) {
       throw new Error("chat not found");
     }
@@ -128,9 +125,9 @@ const createMessage = async (
     message.chat = chat;
     message.from = from;
     const createdMessage = await message.save();
+    chat.messages.push(createdMessage);
     //publishing the message for the messageCreated subscription
     await pubsub.publish(MESSAGE_CREATED, { messageCreated: createdMessage });
-
     return createdMessage;
   } catch (e) {
     console.log("createMesage error", e);
