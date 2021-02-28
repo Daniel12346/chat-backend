@@ -141,12 +141,23 @@ const createMessage = async (
 };
 
 
+// const deleteUser = async (_, { id }): Promise<MutationResult> => {
+//   const user = await User.findOne({ where: { id } });
+//   if (!user) {
+//     throw new Error("User not found");
+//   }
+//   User.delete(user);
+//   return {
+//     success: true,
+//   };
+// };
+
 const deleteMessage = async (_, { id }): Promise<MutationResult> => {
-  const message = await Message.findOne({ id });
+  const message = await Message.findOne({ where: { id } });
   if (!message) {
     throw new ApolloError("Message not found");
   }
-  await Message.remove(message);
+  await Message.delete(message);
   return {
     success: true,
   };
