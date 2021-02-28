@@ -24,4 +24,6 @@ type Mutation {
   logIn(email: String, password: String): String
   createMessage(chatId: ID, content: String): Message
   createChat(userId: ID): Chat
+  deleteMessage(id: ID): MutationResult
+  deleteChat(id: ID): MutationResult
 }

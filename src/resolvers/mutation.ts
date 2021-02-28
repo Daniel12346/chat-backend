@@ -140,6 +140,19 @@ const createMessage = async (
   }
 };
 
+
+const deleteMessage = async (_, { id }): Promise<MutationResult> => {
+  const message = await Message.findOne({ id });
+  if (!message) {
+    throw new ApolloError("Message not found");
+  }
+  await Message.remove(message);
+  return {
+    success: true,
+  };
+};
+
+
 const logIn = async (_, { email, password }, { req }: Context) => {
   //throwing an error if the user id is already set on req
   if ((req as any).userId) {
@@ -167,6 +180,22 @@ const logIn = async (_, { email, password }, { req }: Context) => {
   return token;
 };
 
+const deleteChat = async (_, { id }, { req }) => {
+  try {
+    const chat = await Chat.findOne({ id }, { relations: ["users"] });
+    if (!chat) {
+      throw new ApolloError("Chat not found");
+    }
+    if (!chat.users.find(user => user.id === req.userId)) {
+      throw new ApolloError("You do not have access to this chat");
+    }
+    await Chat.remove(chat);
+    return { success: true };
+  } catch (e) {
+    throw (e);
+  }
+
+}
 //TODO: logging out (jwt blacklist)
 
 const mutationResolvers = {
@@ -175,7 +204,9 @@ const mutationResolvers = {
     deleteUser,
     logIn,
     createMessage,
+    deleteMessage,
     createChat,
+    deleteChat
   },
 };
 
