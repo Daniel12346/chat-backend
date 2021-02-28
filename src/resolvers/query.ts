@@ -42,7 +42,7 @@ const chats = async () => {
 
 const chat = async (_, { id }) => {
   try {
-    return await Chat.findOne({ id }, { relations: ["users", "messages", "messages.from"] });
+    return await Chat.findOne({ id }, { relations: ["users", "messages", "messages.from", "messages.chat"] });
   } catch (e) {
     throw new Error(e);
   }
