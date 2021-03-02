@@ -22,7 +22,7 @@ export class Message extends BaseEntity {
   @JoinTable()
   from: User;
 
-  @ManyToOne(type => Chat, chat => chat.messages)
+  @ManyToOne(type => Chat, chat => chat.messages, { onDelete: "CASCADE" })
   @JoinTable()
   chat: Chat;
   //TODO: | Group

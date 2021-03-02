@@ -196,14 +196,12 @@ const deleteChat = async (_, { id }, { req }) => {
     if (!chat.users.find(user => user.id === req.userId)) {
       throw new ApolloError("You do not have access to this chat");
     }
-    await Chat.remove(chat);
-    return { success: true };
+    await Chat.delete(chat);
   } catch (e) {
-    throw (e);
+    throw e;
   }
-
+  return { success: true };
 }
-//TODO: logging out (jwt blacklist)
 
 const mutationResolvers = {
   Mutation: {
