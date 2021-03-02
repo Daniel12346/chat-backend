@@ -8,7 +8,6 @@ import {
   ManyToMany,
   JoinTable,
   BeforeInsert,
-  BeforeRemove
 } from "typeorm";
 import { User } from "./User";
 import { Message } from "./Message";
