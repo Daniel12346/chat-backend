@@ -38,6 +38,6 @@ export class Chat extends BaseEntity {
   }
   @BeforeRemove()
   async deleteMessages() {
-    await Promise.all(this.messages.map(message => Message.delete(message)))
+    await Promise.all(this.messages?.map(message => Message.delete(message)))
   }
 }

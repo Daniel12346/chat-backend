@@ -189,7 +189,7 @@ const logIn = async (_, { email, password }, { req }: Context) => {
 
 const deleteChat = async (_, { id }, { req }) => {
   try {
-    const chat = await Chat.findOne({ id }, { relations: ["users"] });
+    const chat = await Chat.findOne({ id }, { relations: ["users", "messages"] });
     if (!chat) {
       throw new ApolloError("Chat not found");
     }
