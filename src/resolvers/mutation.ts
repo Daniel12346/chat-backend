@@ -196,7 +196,7 @@ const deleteChat = async (_, { id }, { req }) => {
     if (!chat.users.find(user => user.id === req.userId)) {
       throw new ApolloError("You do not have access to this chat");
     }
-    await Chat.delete(chat);
+    await Chat.remove(chat);
   } catch (e) {
     throw e;
   }
