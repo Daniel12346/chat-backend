@@ -89,9 +89,9 @@ const deleteUser = async (_, { id }): Promise<MutationResult> => {
 const createChat = async (_, { userId }, { req }): Promise<Chat> => {
   try {
     //the receiver
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findOne({ id: userId }, { relations: ["chats"] });
     //the sender (the user that's logged in) TODO: req.userId
-    const me = (await User.findOne({ where: { id: req.userId } }));
+    const me = await User.findOne({ id: req.userId }, { relations: ["chats"] })
     if (!me || !user) {
       throw new ApolloError("user not found");
     }
