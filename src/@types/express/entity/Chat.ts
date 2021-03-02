@@ -7,7 +7,8 @@ import {
   CreateDateColumn,
   ManyToMany,
   JoinTable,
-  BeforeInsert
+  BeforeInsert,
+  BeforeRemove
 } from "typeorm";
 import { User } from "./User";
 import { Message } from "./Message";
@@ -34,5 +35,9 @@ export class Chat extends BaseEntity {
   @BeforeInsert()
   async setUp() {
     this.messages = [];
+  }
+  @BeforeRemove()
+  async deleteMessages() {
+    await Promise.all(this.messages.map(message => Message.delete(message)))
   }
 }
