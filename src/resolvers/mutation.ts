@@ -4,7 +4,7 @@ import { comparePasswords } from "../utils/passwordService";
 import { isDev } from "../utils";
 import { ApolloError, UserInputError } from "apollo-server-core";
 import jwt from "jsonwebtoken";
-
+import cloudinary from "cloudinary"
 import { Message } from "../@types/express/entity/Message";
 import pubsub, { MESSAGE_CREATED } from "../pubsub";
 import { Chat } from "../@types/express/entity/Chat";
@@ -204,6 +204,23 @@ const deleteChat = async (_, { id }, { req }) => {
   return { success: true };
 }
 
+const uploadImage = async (_, { file }, { req }) => {
+  try {
+    const me = await User.findOne({ id: req.userId });
+    const { createReadStream } = await file;
+    const readStream = createReadStream();
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      const cloudStream = cloudinary.v2.uploader.upload_stream((err, uploadedFile) => {
+        err ? reject(err) : resolve(uploadedFile);
+      });
+      readStream.pipe(cloudStream);
+    });
+    me.imageUrl = uploadResult.secure_url || null;
+    await me.save();
+  } catch (e) { throw e }
+  return { success: true }
+}
+
 const mutationResolvers = {
   Mutation: {
     createUser,
@@ -212,7 +229,8 @@ const mutationResolvers = {
     createMessage,
     deleteMessage,
     createChat,
-    deleteChat
+    deleteChat,
+    uploadImage
   },
 };
 

@@ -29,6 +29,9 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @ManyToMany((type) => Chat, (chat) => chat.users)
   chats: Chat[];
 

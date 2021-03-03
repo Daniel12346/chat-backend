@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import readSchemas from "./src/utils/readSchema";
+import cloudinary from "cloudinary"
 import { createConnection } from "typeorm";
 import { ApolloServer, gql } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutation";
@@ -14,7 +15,6 @@ import http from "http";
 import { User } from "./src/@types/express/entity/User";
 import { Message } from "./src/@types/express/entity/Message";
 import { Chat } from "./src/@types/express/entity/Chat";
-
 dotenv.config();
 
 //setting up the middleware
@@ -99,6 +99,8 @@ const startServer = async () => {
       : //heroku database
         (ormConfig[1] as PostgresConnectionOptions)*/
   );
+
+  cloudinary.v2.config({ cloud_name: "deoaakggx", api_key: "413696494632221", api_secret: "vIruondb1MyWq_1HcHksEHRTxHk" });
 
   const httpServer = http.createServer(app);
 
