@@ -30,7 +30,7 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({ nullable: true })
-  imageUrl: string;
+  profileImageUrl: string;
 
   @ManyToMany((type) => Chat, (chat) => chat.users)
   chats: Chat[];

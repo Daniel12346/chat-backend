@@ -3,6 +3,7 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
+  profileImageUrl: String
   chats: [Chat]!
   messages: [Message]!
 }

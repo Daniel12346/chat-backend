@@ -215,7 +215,7 @@ const uploadImage = async (_, { file }, { req }) => {
       });
       readStream.pipe(cloudStream);
     });
-    me.imageUrl = uploadResult.secure_url || null;
+    me.profileImageUrl = uploadResult.secure_url || null;
     await me.save();
   } catch (e) { throw e }
   return { success: true }
