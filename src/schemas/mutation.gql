@@ -28,5 +28,5 @@ type Mutation {
   createChat(userId: ID): Chat
   deleteMessage(id: ID): MutationResult
   deleteChat(id: ID): MutationResult
-  uploadImage(file: FileUpload): MutationResult
+  uploadImage(file: Upload): MutationResult
 }
