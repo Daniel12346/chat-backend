@@ -1,8 +1,7 @@
 import "reflect-metadata";
 import readSchemas from "./src/utils/readSchema";
-import cloudinary from "cloudinary"
 import { createConnection } from "typeorm";
-import { ApolloServer, gql } from "apollo-server-express";
+import { ApolloServer, gql, GraphQLUpload } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutation";
 import queryResolvers from "./src/resolvers/query";
 import subscriptionResolvers from "./src/resolvers/subscription";
@@ -33,9 +32,10 @@ const allSchemas = readSchemas(
 );
 const typeDefs = gql(allSchemas.join());
 const resolvers = {
+  FileUpload: GraphQLUpload,
   ...mutationResolvers,
   ...queryResolvers,
-  ...subscriptionResolvers,
+  ...subscriptionResolvers
 };
 const createServer = () => {
   return new ApolloServer({
@@ -43,6 +43,7 @@ const createServer = () => {
     resolvers,
     playground: true,
     introspection: true,
+    uploads: false,
     context: ({ req }: { [key: string]: Request }) => ({
       req,
     }),
@@ -100,7 +101,6 @@ const startServer = async () => {
         (ormConfig[1] as PostgresConnectionOptions)*/
   );
 
-  cloudinary.v2.config({ cloud_name: "deoaakggx", api_key: "413696494632221", api_secret: "vIruondb1MyWq_1HcHksEHRTxHk" });
 
   const httpServer = http.createServer(app);
 
