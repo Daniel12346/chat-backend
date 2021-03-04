@@ -20,7 +20,7 @@ dotenv.config();
 //setting up the middleware
 const app = express();
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }) as any);
-app.use(graphqlUploadExpress() as any);
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 20 }) as any);
 app.use(isAuth);
 
 const allSchemas = readSchemas(
