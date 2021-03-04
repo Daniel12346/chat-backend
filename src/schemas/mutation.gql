@@ -1,4 +1,4 @@
-scalar Upload
+scalar FileUpload
 
 type MutationResult {
   success: Boolean
@@ -28,5 +28,5 @@ type Mutation {
   createChat(userId: ID): Chat
   deleteMessage(id: ID): MutationResult
   deleteChat(id: ID): MutationResult
-  uploadImage(file: Upload): MutationResult
+  uploadImage(file: FileUpload): MutationResult
 }
