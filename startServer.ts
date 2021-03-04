@@ -33,7 +33,7 @@ const allSchemas = readSchemas(
 );
 const typeDefs = gql(allSchemas.join());
 const resolvers = {
-  FileUpload: GraphQLUpload,
+  Upload: GraphQLUpload,
   ...mutationResolvers,
   ...queryResolvers,
   ...subscriptionResolvers
