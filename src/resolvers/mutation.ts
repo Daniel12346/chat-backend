@@ -8,6 +8,7 @@ import cloudinary from "cloudinary"
 import { Message } from "../@types/express/entity/Message";
 import pubsub, { MESSAGE_CREATED } from "../pubsub";
 import { Chat } from "../@types/express/entity/Chat";
+import { ReadStream } from "typeorm/platform/PlatformTools";
 
 //TODO: error handling, move input validation to frontend, generate types
 
@@ -204,23 +205,30 @@ const deleteChat = async (_, { id }, { req }) => {
   return { success: true };
 }
 
+
+const uploadFile = async (file) => {
+  const { createReadStream } = await file;
+  const fileStream: ReadStream = createReadStream();
+  cloudinary.v2.config({ cloud_name: "deoaakggx", api_key: "413696494632221", api_secret: "vIruondb1MyWq_1HcHksEHRTxHk" });
+  return new Promise<any>((resolve, reject) => {
+    const cloudStream = cloudinary.v2.uploader.upload_stream((err, uploadedFile) => {
+      err ? reject(err) : resolve(uploadedFile);
+    });
+    fileStream.pipe(cloudStream);
+  });
+
+}
 const uploadImage = async (_, { file }, { req }) => {
   try {
     const me = await User.findOne({ id: req.userId });
-    const { createReadStream } = await file;
-    const readStream = createReadStream();
-    const uploadResult = await new Promise<any>((resolve, reject) => {
-      const cloudStream = cloudinary.v2.uploader.upload_stream((err, uploadedFile) => {
-        err ? reject(err) : resolve(uploadedFile);
-      });
-      readStream.pipe(cloudStream);
-    });
-    me.profileImageUrl = uploadResult.secure_url || null;
+    const uploaded = await uploadFile(file);
+    me.profileImageUrl = uploaded.secure_url;
     await me.save();
-  } catch (e) { throw e }
-  return { success: true }
+    return { success: true }
+  } catch (e) {
+    throw e;
+  }
 }
-
 const mutationResolvers = {
   Mutation: {
     createUser,
