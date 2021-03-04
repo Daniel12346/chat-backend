@@ -1,7 +1,8 @@
 import "reflect-metadata";
+import { GraphQLUpload, graphqlUploadExpress } from "graphql-upload"
 import readSchemas from "./src/utils/readSchema";
 import { createConnection } from "typeorm";
-import { ApolloServer, gql, GraphQLUpload } from "apollo-server-express";
+import { ApolloServer, gql } from "apollo-server-express";
 import mutationResolvers from "./src/resolvers/mutation";
 import queryResolvers from "./src/resolvers/query";
 import subscriptionResolvers from "./src/resolvers/subscription";
@@ -19,7 +20,7 @@ dotenv.config();
 //setting up the middleware
 const app = express();
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }) as any);
-
+app.use(graphqlUploadExpress() as any);
 app.use(isAuth);
 
 const allSchemas = readSchemas(

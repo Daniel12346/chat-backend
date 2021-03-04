@@ -1,4 +1,4 @@
-scalar FileUpload
+scalar Upload
 
 type MutationResult {
   success: Boolean
