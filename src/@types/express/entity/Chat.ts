@@ -20,6 +20,9 @@ export class Chat extends BaseEntity {
   @Column({ nullable: true })
   name: string;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @ManyToMany(type => User, user => user.chats)
   @JoinTable()
   users: User[];

@@ -229,16 +229,58 @@ const uploadImage = async (_, { file }, { req }) => {
     throw e;
   }
 }
+
+const uploadChatImage = async (_, { file, chatId }, { req }) => {
+  try {
+    const chat = await Chat.findOne({ id: chatId });
+    if (!chat) {
+      throw new ApolloError("Chat not found");
+    }
+    if (!chat.users.find(user => user.id === req.userId)) {
+      throw new ApolloError("You do not have access to this chat");
+    }
+    const uploaded = await uploadFile(file);
+    chat.imageUrl = uploaded.secure_url;
+    await chat.save();
+    return { success: true }
+  } catch (e) {
+    throw e;
+  }
+}
+
+const addUserToChat = async (_, { userId, chatId }, { req }) => {
+  try {
+    const chat = await Chat.findOne({ id: chatId }, { relations: ["users"] });
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      throw new ApolloError("User not found");
+    }
+    if (!chat) {
+      throw new ApolloError("Chat not found");
+    }
+    if (!chat.users.find(user => user.id === req.userId)) {
+      throw new ApolloError("You do not have access to this chat");
+    }
+    chat.users.push(user);
+    await chat.save();
+    return chat;
+  } catch (e) {
+    throw e;
+  }
+}
+
 const mutationResolvers = {
   Mutation: {
     createUser,
     deleteUser,
+    addUserToChat,
     logIn,
     createMessage,
     deleteMessage,
     createChat,
     deleteChat,
-    uploadImage
+    uploadImage,
+    uploadChatImage
   },
 };
 
