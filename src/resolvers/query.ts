@@ -11,7 +11,7 @@ const me = (_, __, { req }) => {
   if (!req.isAuth) {
     throw new AuthenticationError("Not authenticated");
   }
-  return User.findOne({ id: req.userId }, { relations: ["messages", "chats", "chats.messages"] });
+  return User.findOne({ id: req.userId }, { relations: ["messages", "chats", "chats.messages", "chats.users"] });
 };
 //finds a single user by id
 const user = (_, { id }: { [key: string]: string }, { req }: Context) => {
