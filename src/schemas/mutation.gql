@@ -23,7 +23,7 @@ type Mutation {
   ): User!
   deleteUser(id: ID): MutationResult
   addUserToChat(userId: ID, chatId: ID): Chat
-  #TODO: removeUserFromChat
+  removeUserFromChat(userId: ID, chatId: ID): Chat
 
   #the string that is returned is a jwt
   logIn(email: String, password: String): String

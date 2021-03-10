@@ -269,6 +269,27 @@ const addUserToChat = async (_, { userId, chatId }, { req }) => {
   }
 }
 
+const removeUserFromChat = async (_, { userId, chatId }, { req }) => {
+  try {
+    const chat = await Chat.findOne({ id: chatId }, { relations: ["users"] });
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      throw new ApolloError("User not found");
+    }
+    if (!chat) {
+      throw new ApolloError("Chat not found");
+    }
+    if (!chat.users.find(user => user.id === req.userId)) {
+      throw new ApolloError("You do not have access to this chat");
+    }
+    chat.users = chat.users.filter(user => user.id != userId);
+    await chat.save();
+    return chat;
+  } catch (e) {
+    throw e;
+  }
+}
+
 const mutationResolvers = {
   Mutation: {
     createUser,
@@ -280,7 +301,8 @@ const mutationResolvers = {
     createChat,
     deleteChat,
     uploadImage,
-    uploadChatImage
+    uploadChatImage,
+    removeUserFromChat
   },
 };
 
